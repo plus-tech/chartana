@@ -68,3 +68,30 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+### `npm i -s react-router-dom`
+
+
+### `npm install axios`
+Install axios providing access to REST APIs.
+
+
+### `npm install @mui/material @emotion/react @emotion/styled`
+
+### `npm install @mui/material @mui/styled-engine-sc styled-components`
+
+### `npm install @mui/icons-material`
+
+
+### `npm install @mui/x-data-grid`
+
+### `npm install @mui/material @emotion/react @emotion/styled`
+
+### `npm install @mui/x-data-grid-generator`
+Install the test dataset coming with MUI.
+
+### Function List
+ Ticker
+    +-- Display the list with pagination enabled.
+    +-- Display the ticker's detail when it is highlighted
