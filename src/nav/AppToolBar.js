@@ -25,26 +25,188 @@ import Checkbox from '@mui/material/Checkbox';
 
 import { useTheme } from '@mui/material/styles';
 
-import { GetColorModeContext } from '../metadata/Contexts';
+import { useColorModeContext } from '../metadata/Contexts';
 
 
-const ITEM_HEIGHT = 50;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 200,
+// 
+// primary dropdown menu
+export function PrimaryMenu( props ){
+  const {showCandlestickChart, showTickerPrice, showSymbolList, showTest} = props;
+
+  const navigate = useNavigate();
+
+  const [dropdownAncholEl, setDropdownAnchorEl] = React.useState(null);
+
+  //
+  // dropdown menu   - possible to make it simpler?
+  const handleDropdownMenuOpen = (event) => {
+    setDropdownAnchorEl(event.currentTarget);
+  };
+
+  const handleDropdownMenuClose = () => {
+    setDropdownAnchorEl(null);
+  };
+
+  const dropdownMenuId = 'primary-dropdown-menu';
+  
+  return (
+    <Box>
+      <IconButton
+      size="large"
+      edge="start"
+      color="inherit"
+      aria-label="open drawer"
+      sx={{ mr: 2 }}
+      aria-controls={dropdownMenuId}
+      aria-haspopup="true"
+      onClick={handleDropdownMenuOpen}
+      >
+        <MenuIcon />        
+      </IconButton>
+      <Menu
+        anchorEl={dropdownAncholEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        id={dropdownMenuId}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(dropdownAncholEl)}
+        onClose={handleDropdownMenuClose}
+      >
+        <MenuItem onClick={() => {handleDropdownMenuClose(); navigate('/');          }}>Home</MenuItem>
+        <Divider />
+        <MenuItem onClick={() => {handleDropdownMenuClose(); showCandlestickChart(); }}>Show chart</MenuItem>
+        <MenuItem onClick={() => {handleDropdownMenuClose(); showTickerPrice();      }}>Show price</MenuItem>
+        <MenuItem onClick={() => {handleDropdownMenuClose(); showSymbolList();       }}>Symbol list</MenuItem>      
+        <Divider />
+        <MenuItem onClick={() => {handleDropdownMenuClose(); showTest();             }}>Test</MenuItem>
+      </Menu>
+    </Box>
+  );
+
+}
+
+//
+// profile dropdown menu
+export function ProfileMenu(props){
+  //
+  // get the current theme and color mode
+  const theme = useTheme();
+  const colorMode = useColorModeContext();
+
+  const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const menuId = 'primary-search-account-menu';
+
+  return (
+    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+      <IconButton
+        size="large"
+        edge="end"
+        aria-label="account of current user"
+        aria-controls={menuId}
+        aria-haspopup="true"
+        onClick={handleProfileMenuOpen}
+        color="inherit"
+      >
+        <AccountCircle />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        id={menuId}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={() => {handleMenuClose(); colorMode.toggleColorMode();}}>
+          {theme.palette.mode=='light'? 'Dark ' : 'Light '} Mode
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>Setting</MenuItem>
+        <Divider />
+        <MenuItem onClick={handleMenuClose}>Sign out</MenuItem>
+      </Menu>
+    </Box>
+  );
+}
+
+
+// 
+// asset class select
+export function AssetSelect(){
+  const itemheight = 50;
+  const itempaddingtop = 8;
+  const menuprops = {
+    PaperProps: {
+      style: {
+        maxHeight: itemheight * 4.5 + itempaddingtop,
+        width: 200,
+      },
     },
-  },
-};
+  };
 
-const ASSET = [
-  'Stock',
-  'Bond',
-  'Fund',
-  'FX'
-]
+  const assetcls = [
+    'Stock',
+    'Bond',
+    'Fund',
+    'FX'
+  ];
+
+  const [assetClass, setAssetClass] = React.useState([]);
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setAssetClass(value);
+  };
+
+  return (
+    <FormControl sx={{mt:'1px'}}>
+      <InputLabel id="multiple-checkbox-label" size='small'>Asset</InputLabel>
+      <Select
+        labelId='multiple-checkbox-label'
+        id="demo-multiple-checkbox"
+        multiple
+        value={assetClass}
+        onChange={handleChange}
+        input={<OutlinedInput label="Asset" />}
+        renderValue={(selected) => selected.join(', ')}
+        MenuProps={menuprops}
+        sx={{width: '200px', height: '40px'}}
+      >
+        {assetcls.map((asset) => (
+          <MenuItem key={asset} value={asset}>
+            <Checkbox checked={assetClass.indexOf(asset) > -1} />
+            <ListItemText primary={asset} />
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+}
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -86,111 +248,34 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-
-export default function AppToolBar() {
+export default function AppToolBar({onTickerChange}) {
   //
   // get the current theme and color mode
   const theme = useTheme();
-  const colorMode = GetColorModeContext();
+  const colorMode = useColorModeContext();
 
   const navigate = useNavigate();
 
-  //
-  // ticker entered in the Search box
-  const [ticker, setTicker] = useState();
-
-  const [dropdownAncholEl, setDropdownAnchorEl] = React.useState(null);
-  const isDropdownMenuOpen = Boolean(dropdownAncholEl);
-
-  //
-  // dropdown menu   - possible to make it simpler?
-  const handleDropdownMenuOpen = (event) => {
-    setDropdownAnchorEl(event.currentTarget);
+  const params = {
+    onTickerChange: onTickerChange,
+    showCandlestickChart: showCandlestickChart,
+    showTickerPrice: showTickerPrice,
+    showSymbolList: showSymbolList,
+    showTest: showTest,
   };
 
-  const handleDropdownMenuClose = () => {
-    setDropdownAnchorEl(null);
-  };
-
-  {/* dropdown menu in the center */}
-  const dropdownMenuId = 'primary-dropdown-menu';
-  const renderDropdownMenu = (
-    <Menu
-      anchorEl={dropdownAncholEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={dropdownMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isDropdownMenuOpen}
-      onClose={handleDropdownMenuClose}
-    >
-      <MenuItem onClick={() => {navigate('/');            handleDropdownMenuClose();}}>Home</MenuItem>
-      <MenuItem onClick={() => {navigate('/symbollist');  handleDropdownMenuClose();}}>Symbol list</MenuItem>
-      <MenuItem onClick={() => {navigate('/tickerprice'); handleDropdownMenuClose();}}>Ticker price</MenuItem>
-      <MenuItem onClick={() => {navigate('/candlechart'); handleDropdownMenuClose();}}>Show chart</MenuItem>
-      <Divider />
-      <MenuItem onClick={() => {navigate('/barchart');    handleDropdownMenuClose();}}>Bar chart (Test)</MenuItem>
-    </Menu>
-  );
-
-  //
-  // asset class selection
-  const [assetClass, setAssetClass] = React.useState([]);
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setAssetClass(value);
-  };
-
-  //
-  // profile menu
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const isMenuOpen = Boolean(anchorEl);
-
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const menuId = 'primary-search-account-menu';
-  const profileMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={() => {
-        handleMenuClose();
-        colorMode.toggleColorMode();
-      }}>
-        {theme.palette.mode=='light'? 'Dark ' : 'Light '} Mode
-      </MenuItem>
-      <MenuItem onClick={handleMenuClose}>Setting</MenuItem>
-      <Divider />
-      <MenuItem onClick={handleMenuClose}>Sign out</MenuItem>
-    </Menu>
-  );
-
+  /**
+   * Load CandlestickChart page displaying the certain ticker's price chart
+   * @param {Number} tickerno: ticker entered in the Search box.
+   *
+   * @events : Enter key pressed down in the Search box
+   *           or Click on the Price button.
+  */
+  function showCandlestickChart(){
+    // navigate('/candlestick', { state: { ticker: tickerno } });
+    navigate('/candlestick');
+  }
+    
   /**
    * Load TickerPrice page
    * @param {Number} tickerno: ticker entered in the Search box.
@@ -198,8 +283,25 @@ export default function AppToolBar() {
    * @events : Enter key pressed down in the Search box
    *           or Click on the Price button.
   */
-  function LoadTickerPrice(tickerno){
-    navigate('/tickerprice', { state: { ticker: tickerno } });
+  function showTickerPrice(){
+    // navigate('/tickerprice', { state: { ticker: tickerno } });
+    navigate('/tickerprice');
+  }
+
+  /**
+   * navigate to the SymbolList page
+ * @param {} None
+ * @returns : None
+   */
+  function showSymbolList(){
+    navigate('/symbollist');
+  }
+
+  /**
+   * navigate to the Test page
+   */
+  function showTest(){
+    navigate('/test');
   }
 
   return (
@@ -207,43 +309,11 @@ export default function AppToolBar() {
       <AppBar position="static">
         <Toolbar>
 
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-            aria-controls={dropdownMenuId}
-            aria-haspopup="true"
-            onClick={handleDropdownMenuOpen}
-          >
-            <MenuIcon />
-          </IconButton>
+          <PrimaryMenu {...params} />
 
-          {/* asset class select */}
-          <FormControl sx={{mt:'1px'}}>
-            <InputLabel id="multiple-checkbox-label" size='small'>Asset</InputLabel>
-            <Select
-              labelId='multiple-checkbox-label'
-              id="demo-multiple-checkbox"
-              multiple
-              value={assetClass}
-              onChange={handleChange}
-              input={<OutlinedInput label="Asset" />}
-              renderValue={(selected) => selected.join(', ')}
-              MenuProps={MenuProps}
-              sx={{width: '200px', height: '40px'}}
-            >
-              {ASSET.map((asset) => (
-                <MenuItem key={asset} value={asset}>
-                  <Checkbox checked={assetClass.indexOf(asset) > -1} />
-                  <ListItemText primary={asset} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <AssetSelect />
 
-          {/* search input box */}
+          {/* <SearchBox {...params}/> */}
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -251,10 +321,10 @@ export default function AppToolBar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
-              onChange={(e) => setTicker(e.target.value)}
+              onChange={(e) => onTickerChange(e.target.value)}
               onKeyDown={(e) => {
                 if (e.keyCode === 13) {
-                  LoadTickerPrice(ticker)
+                  showTickerPrice();
                 }
               }}
             />
@@ -263,14 +333,21 @@ export default function AppToolBar() {
           <Box>
             <Button size='medium'
               color="inherit"
-              onClick={() => LoadTickerPrice(ticker)}>
+              onClick={showCandlestickChart}>
+              Chart
+            </Button>
+          </Box>
+          <Box>
+            <Button size='medium'
+              color="inherit"
+              onClick={showTickerPrice}>
               Price
             </Button>
           </Box>
           <Box>
             <Button size='medium'
               color="inherit"
-              onClick={() => {navigate('/symbollist')}}>
+              onClick={showSymbolList}>
               Symbols
             </Button>
           </Box>
@@ -279,30 +356,14 @@ export default function AppToolBar() {
             <Button
               size='medium'
               color="inherit"
-              onClick={() => {navigate('/test')}}>
+              onClick={showTest}>
               Test
             </Button>
           </Box>
 
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* account menu button on the right */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-
-          {renderDropdownMenu}
-          {profileMenu}
+          <ProfileMenu />
 
         </Toolbar>
       </AppBar>

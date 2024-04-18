@@ -91,6 +91,8 @@ Install axios providing access to REST APIs.
 ### `npm install @mui/x-data-grid-generator`
 Install the test dataset coming with MUI.
 
+### `npm install --save react-google-charts`
+
 ### Function List
  Ticker
     +-- Display the list with pagination enabled.

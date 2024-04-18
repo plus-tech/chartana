@@ -10,7 +10,7 @@ import {
 } from '../metadata/TestData';
 
 
-export function GetTickerPrices (endurl, ticker) {
+export function getTickerPrices (endurl, ticker) {
   /**
   * Get the prices of the specified ticker. The request is sbumitted to the backend app.
   * 
@@ -24,29 +24,3 @@ export function GetTickerPrices (endurl, ticker) {
   return axios.get(endurl+path);
 }
 
-
-export function FetchStockData () {
-  /**
-   * A test function, will be deleted later.
-   */
-  // console.log('Candle data: ', testStockdata);
-
-  return(testStockdata);
-}
-
-
-export function FetchCandle () {
-  /**
-   * A test function, will be deleted later.
-   */
-  // console.log('Candle data: ', testStockdata);
-
-  return(testcandle);
-}
-
-export function TestApi(endurl) {
-  /**
-   * A function serving various tests
-   */
-  return axios.get(endurl);
-}

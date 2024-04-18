@@ -35,17 +35,17 @@ function App() {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <div className="App">
-          <BrowserRouter>
-
-            <header className='App-header'>
+        <BrowserRouter>
+          <div className="App">
+            
+            {/* <header className='App-header'>
               <AppToolBar />
-            </header>
+            </header> */}
 
             <AppRouter />
 
-          </BrowserRouter>
-        </div>
+          </div>
+        </BrowserRouter>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

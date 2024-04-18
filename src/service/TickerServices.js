@@ -4,9 +4,8 @@ Services that the frontend use to communicate with the backend
 */
 import axios from 'axios';
 
-import { testtickers } from '../metadata/TestData';
 
-export function GetTickerList(endurl) {
+export function getTickerList(endurl) {
   /**
    * Get the list of symbols from Nasdaq.
    * 
@@ -17,11 +16,3 @@ export function GetTickerList(endurl) {
   return axios.get(endurl+path);
 }
 
-export async function TestGetTickerList () {
-  /**
-   * A test function, will be deleted later.
-   */
-  console.log('Test tickers: ', testtickers);
-
-  return(testtickers);
-}

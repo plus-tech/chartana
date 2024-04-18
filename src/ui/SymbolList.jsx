@@ -7,12 +7,12 @@ import {
   GridColDef,
 } from '@mui/x-data-grid';
 
-import { GetRestApiUrl } from '../metadata/Contexts';
+import { useRestApiUrl } from '../metadata/Contexts';
 import {
-  GetTickerList,
+  getTickerList,
 } from '../service/TickerServices';
 
-const columns: GridColDef[] = [
+const columns = [
   { field: 'id',   headerName: 'Id',   editable: false, },
   { field: 'Symbol',   headerName: 'Symbol',   editable: false, },
   { field: 'SecurityName',   headerName: 'Security Name',   editable: false, },
@@ -51,13 +51,13 @@ function getRowId(row) {
 export default function SymbolList(){
   const [tickers, setTickers] = useState();
 
-  const endurl = GetRestApiUrl();
+  const endurl = useRestApiUrl();
   console.log("Endpoint URL: ", endurl);
 
   useEffect(() => {
     let ignore = false;
 
-    GetTickerList(endurl).then(result => {
+    getTickerList(endurl).then(result => {
       let {status, data } = result;
       /**
        * exception handling according to the returned status
