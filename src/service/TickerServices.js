@@ -4,15 +4,26 @@ Services that the frontend use to communicate with the backend
 */
 import axios from 'axios';
 
+import { getRestApiUrl } from '../common/constants.js';
 
-export function getTickerList(endurl) {
+
+export function getTickerList() {
   /**
    * Get the list of symbols from Nasdaq.
    * 
-   * @param {String} endurl : endpoint URL
+   * @param : None
    * @returns : A list of symbols
    */
-  const path = '/symbollist';
-  return axios.get(endurl+path);
+  const endurl = getRestApiUrl();
+
+  const path = endurl + '/symbollist';
+
+  try{
+    let res = axios.get(path);
+
+    return res;
+  } catch (err){
+    throw err;
+  }
 }
 

@@ -1,16 +1,14 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-
+import { useErrorBoundary } from "react-error-boundary";
 
 import {
   DataGrid,
-  GridColDef,
 } from '@mui/x-data-grid';
 
-import { useRestApiUrl } from '../metadata/Contexts';
 import {
   getTickerList,
-} from '../service/TickerServices';
+} from '../service/tickerservices.js';
 
 const columns = [
   { field: 'id',   headerName: 'Id',   editable: false, },
@@ -49,31 +47,33 @@ function getRowId(row) {
 }
 
 export default function SymbolList(){
-  const [tickers, setTickers] = useState();
 
-  const endurl = useRestApiUrl();
-  console.log("Endpoint URL: ", endurl);
+  const { showBoundary } = useErrorBoundary();
+  const [tickers, setTickers] = useState();
 
   useEffect(() => {
     let ignore = false;
 
-    getTickerList(endurl).then(result => {
-      let {status, data } = result;
-      /**
-       * exception handling according to the returned status
-       */
-      console.log('symbols: ', data);
-      // data = JSON.parse(data);
-      if (!ignore) {
-        setTickers(data);
+    getTickerList().then(
+      result => {
+        let {status, data } = result;
+
+        console.log('symbols: ', data);
+
+        if (!ignore) {
+          setTickers(data);
+        }
+      },
+      error => {
+        showBoundary(error);
       }
-    });
+    );
     //
     // cleanup function
     return () => {
       ignore = true;
     }
-  }, [endurl]);
+  }, []);
 
   if (tickers == null) {
     return <div> </div>;

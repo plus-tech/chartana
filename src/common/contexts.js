@@ -22,9 +22,3 @@ export function useColorModeContext(){
   return useContext(ColorModeContext);
 }
 
-//
-// REST API URL context   (local test dev : 'http://127.0.0.1:5000/')
-export const ApiUrlContext = createContext('http://127.0.0.1:5000/');
-export function useRestApiUrl(){
-  return useContext(ApiUrlContext);
-}

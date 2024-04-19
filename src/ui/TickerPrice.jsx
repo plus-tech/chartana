@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useErrorBoundary } from "react-error-boundary";
 
 import {
   DataGrid,
-  GridColDef,
 } from '@mui/x-data-grid';
 
 import { Chart } from "react-google-charts";
 
-import { useRestApiUrl } from '../metadata/Contexts'
-import { getTickerPrices } from '../service/PriceServices.js';
+import { getTickerPrices } from '../service/priceservices.js';
 import { formatDate } from '../common/utils.js';
 
 const columns = [
@@ -32,11 +30,10 @@ function getRowId(row) {
 
 //
 // for test, will be updated with the real code later
-export default function TickerPrice({tickerno}){
-  const [prices, setPrices] = useState();
-  const endurl = useRestApiUrl();
+export default function TickerPrice({ticker}){
 
-  let ticker = tickerno;
+  const { showBoundary } = useErrorBoundary();
+  const [prices, setPrices] = useState();
 
   //
   // get the ticker no. entered through the Search box
@@ -47,29 +44,28 @@ export default function TickerPrice({tickerno}){
   // }
   console.log("price ticker:", ticker);
 
-  try {
-    useEffect(() => {
-      let ignore = false;
-      getTickerPrices(endurl, ticker).then(result => {
+  useEffect(() => {
+    let ignore = false;
+  
+    getTickerPrices(ticker).then(
+      result => {
         // console.log('result: ', result);
         let {status, data} = result;
-        /**
-         * error handling in response to the erroneous status returned
-         */
 
         if (!ignore) {
           setPrices(data);
         }
-      });
-      return () => {
-        ignore = true;
+      },
+      error => {
+        showBoundary(error);
       }
-    }, [endurl, ticker]);
-  } catch (err) {
-    console.log('exception: ', err);
-  }
+    );
+    return () => {
+      ignore = true;
+    }
+  }, [ticker]);
 
-  if (prices == null){
+  if (ticker == null || prices == null){
     return <div />
   }
 
@@ -96,37 +92,3 @@ export default function TickerPrice({tickerno}){
     </div>
   );
 }
-
-/*
-
-import React from "react";
-import { Chart } from "react-google-charts";
-
-export const data = [
-  ["Name", "Salary", "Full time employee"],
-  ["Mike", { v: 10000, f: "$10,000" }, true],
-  ["Jim", { v: 8000, f: "$8,000" }, false],
-  ["Alice", { v: 12500, f: "$12,500" }, true],
-  ["Bob", { v: 7000, f: "$7,000" }, true],
-];
-
-export const options = {
-  title: "Company Performance",
-  curveType: "function",
-  legend: { position: "bottom" },
-  pageSize: 1,
-};
-
-export function App() {
-  return (
-    <Chart
-      chartType="Table"
-      width="100%"
-      height="400px"
-      data={data}
-      options={options}
-    />
-  );
-}
-
- */

@@ -25,7 +25,8 @@ import Checkbox from '@mui/material/Checkbox';
 
 import { useTheme } from '@mui/material/styles';
 
-import { useColorModeContext } from '../metadata/Contexts';
+import { useColorModeContext } from '../common/contexts.js';
+import { checkTicker } from '../common/utils.js';
 
 
 // 
@@ -141,7 +142,10 @@ export function ProfileMenu(props){
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={() => {handleMenuClose(); colorMode.toggleColorMode();}}>
+        <MenuItem onClick={() => {
+          handleMenuClose(); 
+          colorMode.toggleColorMode();}}
+        >
           {theme.palette.mode=='light'? 'Dark ' : 'Light '} Mode
         </MenuItem>
         <MenuItem onClick={handleMenuClose}>Setting</MenuItem>
@@ -208,6 +212,9 @@ export function AssetSelect(){
 }
 
 
+//
+// search box
+// const { onTickerChange, showTickerPrice } = props;
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -248,11 +255,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+
 export default function AppToolBar({onTickerChange}) {
   //
   // get the current theme and color mode
   const theme = useTheme();
   const colorMode = useColorModeContext();
+  const [ticker, setTicker] = useState(null);
 
   const navigate = useNavigate();
 
@@ -266,31 +275,36 @@ export default function AppToolBar({onTickerChange}) {
 
   /**
    * Load CandlestickChart page displaying the certain ticker's price chart
-   * @param {Number} tickerno: ticker entered in the Search box.
+   * @param {Number} ticker: ticker entered in the Search box.
    *
    * @events : Enter key pressed down in the Search box
    *           or Click on the Price button.
   */
   function showCandlestickChart(){
     // navigate('/candlestick', { state: { ticker: tickerno } });
-    navigate('/candlestick');
+    if (checkTicker(ticker)){
+      navigate('/candlestick');
+    }
   }
     
   /**
    * Load TickerPrice page
-   * @param {Number} tickerno: ticker entered in the Search box.
+   * @param {Number} ticker: ticker entered in the Search box.
    *
    * @events : Enter key pressed down in the Search box
    *           or Click on the Price button.
   */
   function showTickerPrice(){
     // navigate('/tickerprice', { state: { ticker: tickerno } });
-    navigate('/tickerprice');
+    console.log('type of ticker: ', typeof(ticker));
+    if (checkTicker(ticker)){
+      navigate('/tickerprice');
+    }
   }
 
   /**
    * navigate to the SymbolList page
- * @param {} None
+ * @param {} : None
  * @returns : None
    */
   function showSymbolList(){
@@ -321,8 +335,11 @@ export default function AppToolBar({onTickerChange}) {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
-              onChange={(e) => onTickerChange(e.target.value)}
+              onChange={(e) => {
+                setTicker(e.target.value);
+                onTickerChange(e.target.value)}}
               onKeyDown={(e) => {
+                e.stopPropagation();
                 if (e.keyCode === 13) {
                   showTickerPrice();
                 }

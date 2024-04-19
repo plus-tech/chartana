@@ -14,7 +14,7 @@ import {
 
 import { useDemoData } from '@mui/x-data-grid-generator';
 
-import { useRestApiUrl } from '../metadata/Contexts'
+import { getRestApiUrl } from '../common/constants.js';
 import axios from 'axios';
 
 export function testApi(endurl) {
@@ -47,7 +47,7 @@ export default function Test(props){
   console.log('[Test] ticker: ', tickerno);
 
   const [text, setText] = useState('for Test');
-  const endurl = useRestApiUrl();
+  const endurl = getRestApiUrl();
 
   const { data } = useDemoData({
     dataSet: 'Commodity',

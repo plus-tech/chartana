@@ -2,13 +2,12 @@ import logo from './logo.svg';
 import './App.css';
 
 import * as React from 'react';
-// import React, { useState, useMemo, createContext } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import {BrowserRouter} from 'react-router-dom';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import { ColorModeContext } from './metadata/Contexts';
+import { ColorModeContext } from './common/contexts';
 import AppToolBar from './nav/AppToolBar';
 import AppRouter from './nav/AppRouter';
 

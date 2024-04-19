@@ -18,3 +18,27 @@ export function formatDate(date, fmt){
 
     return [year, month, day].join('-'); 
 } 
+
+
+export function checkTicker(ticker){
+    /**
+     * Check ticker entered through the Search box.
+     * 
+     * @param {Number} ticker: ticker to be validated
+     * @returns 
+     *  true: if valid
+     *  false: if invalid
+     */
+    if (ticker == null){
+        return false;
+    }
+    else if (ticker === ""){
+        return false;
+    }
+    else if (isNaN (ticker)){
+        return false;
+    }
+    else {
+        return true;
+    }
+}

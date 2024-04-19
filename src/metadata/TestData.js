@@ -1,7 +1,7 @@
 // Test data prepared before the backend is in place
 // Temporary
 
-const testtickers = [
+export const testtickers = [
   {
     tid: "A",
     tname: "Ticker",
@@ -22,13 +22,13 @@ const testtickers = [
   }
 ];
 
-const testprice = [
+export const testprice = [
   ['Thu Feb 20 2024',  0,   0,   0,   0],
   ['Thu Feb 21 2024',  0,   0,   0,   0],
   ['Thu Feb 22 2024',  0,   0,   0,   0],
 ]
 
-const testStockdata = [
+export const testStockdata = [
   {
     date: '2023-02-01',
     openClose: [22.86, 24.39],
@@ -67,7 +67,7 @@ const testStockdata = [
   },
 ];
 
-const testcandle = [
+export const testcandle = [
   {
     name: 'Page A',
     uv: 590,
@@ -112,4 +112,3 @@ const testcandle = [
   },
 ];
 
-export { testtickers, testprice, testStockdata, testcandle };
