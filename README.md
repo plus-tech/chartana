@@ -96,6 +96,9 @@ Install the test dataset coming with MUI.
 
 ### `npm install --save react-google-charts`
 
+### `npm install d3`
+Install D3.js, a free, open-source JavaScript library for viz.
+
 ### Function List
  Ticker
     +-- Display the list with pagination enabled.

@@ -10,7 +10,7 @@ import {
 import AppToolBar from './AppToolBar';
 import SymbolList from "../ui/SymbolList";
 import TickerPrice from '../ui/TickerPrice';
-import CandlestickChart from '../ui/CandlestickChart';
+import ShowCandlestick from '../ui/ShowCandlestick';
 import ErrorPage from '../ui/ErrorPage';
 import Test from '../ui/Test';
 
@@ -51,7 +51,7 @@ const AppRouter = () => {
             <Route path="/"            element={<div />} />
             <Route path="/symbollist"  element={<SymbolList />} />
             <Route path="/tickerprice" element={<TickerPrice      ticker={ticker} />} />
-            <Route path="/candlestick" element={<CandlestickChart ticker={ticker} />} />
+            <Route path="/candlestick" element={<ShowCandlestick  ticker={ticker} />} />
             <Route path="/error"       element={<ErrorPage        {...errdetail} />} />
             <Route path="/test"        element={<Test             {...params} />} />
         </Routes>

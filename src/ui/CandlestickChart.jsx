@@ -1,114 +1,137 @@
-import * as React from "react";
-import { useState, useEffect } from 'react';
-import { useErrorBoundary } from "react-error-boundary";
-// import { useLocation } from "react-router-dom";
-
-import { Chart } from "react-google-charts";
-
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  Cell,
-  CartesianGrid,
-} from 'recharts';
-
-import { getTickerPrices } from '../service/priceservices.js';
-import { formatDate } from '../common/utils.js';
+import * as React from 'react';
+import * as d3 from "d3";
+import {useState, useRef, useEffect, useInterval} from "react";
 
 
-export default function CandlestickChart({ticker}){
+export default function CandlestickChart({prices}) {
 
-  const { showBoundary } = useErrorBoundary();
-  const [prices, setPrices] = useState();
-  const [volume, setVolumne] = useState();
+  const ticker = [
+    {
+      Date: "2017-11-03",
+      Open: 174,
+      High: 174.259995,
+      Low: 171.119995,
+      Close: 172.5,
+      AdjClose: 170.526596,
+      Volume: 59398600,
+    },
+  ];
 
-  //
-  // get the ticker no. entered through the Search box
-  // const location = useLocation();
-  // const sticker = location.state['ticker'];
-  // if (sticker != null){
-  //   ticker = sticker;
-  // }
-  console.log("chart ticker:", ticker);
+  // Declare the chart dimensions and margins.
+  const width = 928;
+  const height = 600;
+  const marginTop = 20;
+  const marginRight = 30;
+  const marginBottom = 30;
+  const marginLeft = 40;
+
+  // Declare the positional encodings.
+  const x = d3.scaleBand()
+      .domain(d3.utcDay
+          .range(ticker.at(0).Date, +ticker.at(-1).Date + 1)
+          .filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+      .range([marginLeft, width - marginRight])
+      .padding(0.2);
+
+  const y = d3.scaleLog()
+      .domain([d3.min(ticker, d => d.Low), d3.max(ticker, d => d.High)])
+      .rangeRound([height - marginBottom, marginTop]);
+
+  // Create the SVG container.
+  const svg = d3.create("svg")
+      .attr("viewBox", [0, 0, width, height]);
+
+  // Append the axes.
+  svg.append("g")
+      .attr("transform", `translate(0,${height - marginBottom})`)
+      .call(d3.axisBottom(x)
+        .tickValues(d3.utcMonday
+            .every(width > 720 ? 1 : 2)
+            .range(ticker.at(0).Date, ticker.at(-1).Date))
+        .tickFormat(d3.utcFormat("%-m/%-d")))
+      .call(g => g.select(".domain").remove());
+
+  svg.append("g")
+      .attr("transform", `translate(${marginLeft},0)`)
+      .call(d3.axisLeft(y)
+        .tickFormat(d3.format("$~f"))
+        .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+      .call(g => g.selectAll(".tick line").clone()
+        .attr("stroke-opacity", 0.2)
+        .attr("x2", width - marginLeft - marginRight))
+      .call(g => g.select(".domain").remove());
+
+  // Create a group for each day of data, and append two lines to it.
+  const g = svg.append("g")
+      .attr("stroke-linecap", "round")
+      .attr("stroke", "black")
+    .selectAll("g")
+    .data(ticker)
+    .join("g")
+      .attr("transform", d => `translate(${x(d.Date)},0)`);
+
+  g.append("line")
+      .attr("y1", d => y(d.Low))
+      .attr("y2", d => y(d.High));
+
+  g.append("line")
+      .attr("y1", d => y(d.Open))
+      .attr("y2", d => y(d.Close))
+      .attr("stroke-width", x.bandwidth())
+      .attr("stroke", d => d.Open > d.Close ? d3.schemeSet1[0]
+          : d.Close > d.Open ? d3.schemeSet1[2]
+          : d3.schemeSet1[8]);
+
+  // Append a title (tooltip).
+  const formatDate = d3.utcFormat("%B %-d, %Y");
+  const formatValue = d3.format(".2f");
+  const formatChange = ((f) => (y0, y1) => f((y1 - y0) / y0))(d3.format("+.2%"));
+
+  g.append("title")
+      .text(d => `${formatDate(d.Date)}
+        Open: ${formatValue(d.Open)}
+        Close: ${formatValue(d.Close)} (${formatChange(d.Open, d.Close)})
+        Low: ${formatValue(d.Low)}
+        High: ${formatValue(d.High)}`);
+
+  return svg.node();
+}
+
+
+export const Circle = () => {
+  const ref = React.useRef();
+
+  React.useEffect(() => {
+    const svgElement = d3.select(ref.current)
+    svgElement.append("circle")
+      .attr("cx", 150)
+      .attr("cy", 70)
+      .attr("r",  50)
+  }, []);
+
+  const refaxis = useRef()
 
   useEffect(() => {
-    let ignore = false;
-    getTickerPrices(ticker).then(
-      result => {        
-        let {status, data} = result;
+    const xScale = d3.scaleLinear()
+      .domain([0, 100])
+      .range([10, 290])
 
-        let tmpprice = [];
-        let tmpvol = [];
+    const svgElement = d3.select(refaxis.current)
+    const axisGenerator = d3.axisBottom(xScale)
+    svgElement.append("g")
+      .call(axisGenerator)
+  }, [])
 
-        tmpprice.push(["Day", "Low", "High", "Open", "Close"]);
-        tmpvol.push(["Day", "Volume"]);
-
-        data.map(record => {
-          let date = formatDate(record["Date"], 'SHORT');
-          tmpprice.push([
-            date, 
-            record["Low"],
-            record["Open"],
-            record["Close"],
-            record["High"]
-          ]);
-          tmpvol.push([
-            date,
-            record["Volume"]
-          ]);
-        });
-        if (!ignore) {
-          setPrices(tmpprice);
-          setVolumne(tmpvol);
-        }
-      },
-      error => {
-        showBoundary(error);
-      }
-    );
-
-    return () => {
-      ignore = true;
-    }
-  }, [ticker]);
-
-  if (prices == null){
-    return <div />
-  }
-  
-  const options = {
-    legend: "none",
-    width: "100%",
-    height: "100%",
-    selectionMode: 'multiple',
-    // chartArea: {left:20, top:0, width:'10000px', height:'75%'},
-    hAxis: {
-      // title: 'Date',
-      titleTextStyle: {
-        color: '#FF0000'
-      },
-      textPosition: 'Out',
-    },
-    orientation: 'horizontal',
-    title: "Ticker " + ticker,
-    // tooltip: {isHtml: true},
-  };
-  
   return (
-    <div style={{width: "100%", height: "auto"}}>
-      <Chart
-        chartType="CandlestickChart"
-        data={prices}
-        options={options}
-      />
-      {/* hwo to build a composite chart having the volume in the same chart area? */}
-      {/* <Chart
-        chartType="Bar"
-      /> */}
-    </div>
+    <React.Fragment>
+      <svg ref={ref}/>
+      <svg ref={refaxis} />
+    </React.Fragment>
+  )
+
+  return (
+    <svg
+      ref={ref}
+    />
   );
 }

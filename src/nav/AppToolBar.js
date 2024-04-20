@@ -261,7 +261,12 @@ export default function AppToolBar({onTickerChange}) {
   // get the current theme and color mode
   const theme = useTheme();
   const colorMode = useColorModeContext();
-  const [ticker, setTicker] = useState(null);
+  /*
+    ticker entered in the Search box on AppToolBar
+    a default ticker is used during test, whereas an alert message shall be displayed 
+    in case of the ticker being not specifed.
+  */
+  const [ticker, setTicker] = useState(2395);
 
   const navigate = useNavigate();
 

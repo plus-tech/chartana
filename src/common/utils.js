@@ -1,5 +1,14 @@
 
 export function formatDate(date, fmt){
+    /**
+     * Format a date.
+     * 
+     * @param {String} date: date to be formatted
+     * @param {String} fmt: long or short format
+     * @returns 
+     *  YYYY-MM-DD: if fmt === 'LONG' 
+     *  YY-M-D: if fmt === 'SHORT'
+     */
     let d = new Date(date);
 
     let year = d.getFullYear();
@@ -24,7 +33,7 @@ export function checkTicker(ticker){
     /**
      * Check ticker entered through the Search box.
      * 
-     * @param {Number} ticker: ticker to be validated
+     * @param {String} ticker: ticker to be validated
      * @returns 
      *  true: if valid
      *  false: if invalid

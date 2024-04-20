@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useEffect, useRef, useMemo } from 'react';
 
 import { Chart } from "react-google-charts";
+import CandlestickChart, {Circle} from './CandlestickChart';
 
 import {
   DataGrid,
@@ -25,6 +26,17 @@ export function testApi(endurl) {
 }
 
 
+export default function Test(props){
+  let {tickerno} = props;
+  console.log('[Test] ticker: ', tickerno);
+
+  return (
+    <Circle />
+  );
+}
+
+
+
 export const datatbl = [
   ["Name", "Salary", "Full time employee"],
   ["Mike", { v: 10000, f: "$10,000" }, true],
@@ -40,9 +52,7 @@ export const optionstbl = {
   pageSize: 1,
 };
 
-
-export default function Test(props){
-
+export function TestGoogleChart(props){
   let {tickerno} = props;
   console.log('[Test] ticker: ', tickerno);
 
@@ -94,24 +104,3 @@ export default function Test(props){
   // return <div> {text} </div>;
 }
 
-/*
-    <div style={{ width: '100%' }}>
-      <div style={{ height: 350, width: '100%' }}>
-        <DataGrid {...data} />
-      </div>
-    </div>
-
-
-export function App() {
-  return (
-    <Chart
-      chartType="CandlestickChart"
-      width="100%"
-      height="400px"
-      data={data}
-      options={options}
-    />
-  );
-}
-
-*/
