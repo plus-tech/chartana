@@ -6,11 +6,6 @@ import axios from 'axios';
 
 import { getRestApiUrl } from '../common/constants.js';
 
-import {
-  testcandle,
-  testStockdata,
-} from '../metadata/testdata.js';
-
 
 export function getTickerPrices (ticker, fmt='DICTIONARY') {
   /**
@@ -25,23 +20,11 @@ export function getTickerPrices (ticker, fmt='DICTIONARY') {
   const endurl = getRestApiUrl();
   const path =  endurl + '/symbolprices';
 
-  axios.get(path, {
+  return axios.get(path, {
     params: {
       ticker: ticker,
       fmt: fmt
     }
-  })
-  .then(function (response) {
-    return response;
-  })
-  .catch(function (error) {
-    console.log(error);
-    // 
-    // throw error to the external layer
-    throw error;
-  })
-  .finally(function () {
-    // add if any
   });
 }
 
