@@ -7,23 +7,32 @@ import axios from 'axios';
 import { getRestApiUrl } from '../common/constants.js';
 
 
-export function getTickerList() {
+export function getTickerList(fmt='DICTIONARY') {
   /**
    * Get the list of symbols from Nasdaq.
    * 
-   * @param : None
+   * @param {String} fmt : indicates the format of the prices
    * @returns : A list of symbols
    */
   const endurl = getRestApiUrl();
 
   const path = endurl + '/symbollist';
 
-  try{
-    let res = axios.get(path);
-
-    return res;
-  } catch (err){
-    throw err;
-  }
+  axios.get(path, {
+    params: {
+      fmt: fmt
+    }
+  })
+  .then(function (response) {
+    return response;
+  })
+  .catch(function (error) {
+    console.log(error);
+    // 
+    // throw error to the external layer
+    throw error;
+  })
+  .finally(function () {
+    // add if any
+  });
 }
-
